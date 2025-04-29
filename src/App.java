@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -5,25 +8,29 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Scanner;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 public class App {
   public static void main(String[] args) {
-    // getTopRated();
-    // System.out.println(getTrendingMovies());
+    getTopRated();
+    //System.out.println(getTrendingMovies());
+    //System.out.println(getGenreIDs());
     menu();
   }
 
-  private final static String API_READ = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NzE0ZjE2ZGViMjY2YzhjNjcwMDhjMTNjNDZmNjMyZiIsIm5iZiI6MTc0NTM2NTAyNC41NjMsInN1YiI6IjY4MDgyODIwMTVhMWQ1YTYxNGFhOWI1ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._EFInwczNICamxI8sgJCpOiv7Kj4886iqatH-epac6o";
+  private final static String API_KEY = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NzE0ZjE2ZGViMjY2YzhjNjcwMDhjMTNjNDZmNjMyZiIsIm5iZiI6MTc0NTM2NTAyNC41NjMsInN1YiI6IjY4MDgyODIwMTVhMWQ1YTYxNGFhOWI1ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._EFInwczNICamxI8sgJCpOiv7Kj4886iqatH-epac6o";
 
   private static HttpResponse getTopRated() {
     try {
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create("https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=1"))
-          .header("accept", "application/json")
-          .header("Authorization", "Bearer " + API_READ)
-          .method("GET", HttpRequest.BodyPublishers.noBody())
-          .build();
-      HttpResponse<String> response;
-      response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+        .uri(URI.create("https://api.themoviedb.org/3/movie/top_rated?language=pt-br&page=1"))
+        .header("accept", "application/json")
+        .header("Authorization", "Bearer " + API_KEY)
+        .method("GET", HttpRequest.BodyPublishers.noBody())
+        .build();
+      HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
       System.out.println(response.body());
       return response;
     } catch (IOException e) {
@@ -36,18 +43,17 @@ public class App {
     return null;
   }
 
-  private static HttpResponse getTrendingMovies() {
+  private static String getTrendingMovies() {
     try {
       HttpResponse<String> response;
       HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create("https://api.themoviedb.org/3/trending/movie/day?language=en-US"))
+          .uri(URI.create("https://api.themoviedb.org/3/trending/movie/day?language=pt-BR"))
           .header("accept", "application/json")
-          .header("Authorization", "Bearer " + API_READ)
+          .header("Authorization", "Bearer " + API_KEY)
           .method("GET", HttpRequest.BodyPublishers.noBody())
           .build();
       response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-      System.out.println(response.body());
-      return response;
+      return response.body();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -57,6 +63,29 @@ public class App {
     }
     return null;
   }
+
+private static String getGenreIDs() {
+  try {
+    HttpRequest request = HttpRequest.newBuilder()
+      .uri(URI.create("https://api.themoviedb.org/3/genre/movie/list?language=pt-br"))
+      .header("accept", "application/json")
+      .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NzE0ZjE2ZGViMjY2YzhjNjcwMDhjMTNjNDZmNjMyZiIsIm5iZiI6MTc0NTM2NTAyNC41NjMsInN1YiI6IjY4MDgyODIwMTVhMWQ1YTYxNGFhOWI1ZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ._EFInwczNICamxI8sgJCpOiv7Kj4886iqatH-epac6o")
+      .method("GET", HttpRequest.BodyPublishers.noBody())
+      .build();
+    HttpResponse<String> response;
+    response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    System.out.println(response.body());
+    return response.body();
+  } catch (IOException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+  } catch (InterruptedException e) {
+    // TODO Auto-generated catch block
+    e.printStackTrace();
+  }
+  return null;
+}
+
 
   private static void menu() {
     Scanner input = new Scanner(System.in);
