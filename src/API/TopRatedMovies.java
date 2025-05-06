@@ -19,7 +19,7 @@ public class TopRatedMovies {
     API_KEY = apiKey;
   }
 
-  public String getTopRated(int page) {
+  public HttpResponse<String> getTopRated(long page) {
     try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create("https://api.themoviedb.org/3/movie/top_rated?language=pt-br&page="+String.valueOf(page)))
@@ -28,29 +28,21 @@ public class TopRatedMovies {
           .method("GET", HttpRequest.BodyPublishers.noBody())
           .build();
       HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-      //System.out.println(response.body());
+      return response;
+    } catch (IOException | InterruptedException e) {
+      System.out.println("getTopRated Exception: " + e.getMessage());
+    }
+    return null;
+  }
+
+  public Long getTotalPages() {
+    try {
+      HttpResponse<String> response = new TopRatedMovies(API_KEY).getTopRated(1);
       JSONParser parse = new JSONParser();
       JSONObject data_obj = (JSONObject) parse.parse(response.body());
-      System.out.println("\n===========================================================");
-
-      JSONArray results = (JSONArray) data_obj.get("results");
-
-      for (int i = 0; i < results.size(); i++) {
-        JSONObject movie = (JSONObject) results.get(i);
-        String title = movie.get("title").toString();
-        String releaseDate = movie.get("release_date").toString();
-        System.out.println("Title: " + title + ", Release Date: " + releaseDate);
-      }
-      return response.body();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      return (Long) data_obj.get("total_pages");
     } catch (ParseException e) {
       throw new RuntimeException(e);
     }
-    return null;
   }
 }

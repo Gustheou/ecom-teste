@@ -8,12 +8,14 @@ public class Movie {
   private String releaseDate;
   private ArrayList<Integer> movieGenre;
   private Double vote_average;
+  private String movieID;
 
-  public Movie(String title, ArrayList<Integer> movieGenre, String releaseDate, Double vote_average) {
+  public Movie(String title, ArrayList<Integer> movieGenre, String releaseDate, Double vote_average, String movieID) {
     this.title = title;
     this.movieGenre = movieGenre;
     this.releaseDate = releaseDate;
     this.vote_average = vote_average;
+    this.movieID = movieID;
   }
 
   public String getTitle() {
