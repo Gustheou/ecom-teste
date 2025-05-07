@@ -33,4 +33,8 @@ public class Movie {
   public Double getVoteAverage() {
     return vote_average;
   }
+
+  public String getMovieID() {
+    return movieID;
+  }
 }

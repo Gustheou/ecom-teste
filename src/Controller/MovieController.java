@@ -38,12 +38,7 @@ public class MovieController {
         System.out.println("###############");
         for (Object movieObject : results) {
           JSONObject movieJson = (JSONObject) movieObject;
-          String title = movieJson.get("title").toString();
-          String releaseDate = movieJson.get("release_date").toString();
-          ArrayList<Integer> genreIds = (ArrayList<Integer>) movieJson.get("genre_ids");
-          Double voteAverage = (double) movieJson.get("vote_average");
-          String movieID = movieJson.get("id").toString();
-          Movie movie = new Movie(title, genreIds, releaseDate, voteAverage, movieID);
+          Movie movie = movieData(movieJson);
           moviesList.add(movie);
         }
       } catch (ParseException e) {
@@ -53,7 +48,7 @@ public class MovieController {
     return moviesList;
   }
 
-  private List<Movie> getMoviesTopRatedUntilMovieLimit (int limit) {
+  private List<Movie> getMoviesTopRatedUntilMovieQuantity (int limit) {
     ArrayList<Movie> moviesList = new ArrayList<Movie>();
     int counter = 0;
     for (int i = 1; i <= PAGE_LIMIT; i++) {
@@ -66,12 +61,7 @@ public class MovieController {
         System.out.println("###############");
         for (Object movieObject : results) {
           JSONObject movieJson = (JSONObject) movieObject;
-          String title = movieJson.get("title").toString();
-          String releaseDate = movieJson.get("release_date").toString();
-          ArrayList<Integer> genreIds = (ArrayList<Integer>) movieJson.get("genre_ids");
-          Double voteAverage = (double) movieJson.get("vote_average");
-          String movieID = movieJson.get("id").toString();
-          Movie movie = new Movie(title, genreIds, releaseDate, voteAverage, movieID);
+          Movie movie = movieData(movieJson);
           moviesList.add(movie);
           counter +=1;
           if (counter == limit) {
@@ -142,7 +132,7 @@ public class MovieController {
   public HashMap<String, Integer> getQuantityForGenreTopRated (int totalOfMovies) {
     HashMap<String, Integer> movieQuantityForGenre = new HashMap<>();
     HashMap<Object, String> genreMap = new GenreIds(API_KEY).getGenreIDs();
-    List<Movie> movieList = getMoviesTopRatedUntilMovieLimit(totalOfMovies);
+    List<Movie> movieList = getMoviesTopRatedUntilMovieQuantity(totalOfMovies);
     for(Object id : genreMap.keySet()) {
       int movieCounter = 0;
       for (Movie movie : movieList) {
@@ -190,9 +180,8 @@ public class MovieController {
   ###################################
   */
 
-  public List<Movie> MovieTrendingList(long limitPage) {
+  private List<Movie> getMovieTrendingList(long limitPage) {
     ArrayList<Movie> moviesList = new ArrayList<Movie>();
-    int counter = 0;
     for (int i = 1; i <= limitPage; i++) {
       try {
         HttpResponse<String> response = new TrendingMovies(API_KEY).getTrendingMovies(i);
@@ -201,12 +190,7 @@ public class MovieController {
         JSONArray results = (JSONArray) data_obj.get("results");
         for (Object movieObject : results) {
           JSONObject movieJson = (JSONObject) movieObject;
-          String title = movieJson.get("title").toString();
-          String releaseDate = movieJson.get("release_date").toString();
-          ArrayList<Integer> genreIds = (ArrayList<Integer>) movieJson.get("genre_ids");
-          Double voteAverage = (double) movieJson.get("vote_average");
-          String movieID = movieJson.get("id").toString();
-          Movie movie = new Movie(title, genreIds, releaseDate, voteAverage, movieID);
+          Movie movie = movieData(movieJson);
           moviesList.add(movie);
         }
       } catch (ParseException e) {
@@ -215,6 +199,21 @@ public class MovieController {
     }
     return moviesList;
   }
+
+  public List<String> getMovieTopRatedAndTrending() {
+    List<String> movieTopRatedAndTrending = new ArrayList<>();
+    List<Movie> moviesTopRated = getMoviesTopRatedUntilMovieQuantity(250);
+    List<Movie> moviesTrendingList = getMovieTrendingList(20);
+    for(Movie movieTopRated : moviesTopRated) {
+      for(Movie movieTrending : moviesTrendingList) {
+        if (movieTopRated.getMovieID().equals(movieTrending.getMovieID())) {
+          movieTopRatedAndTrending.add(movieTopRated.getTitle());
+        }
+      }
+    }
+    return movieTopRatedAndTrending;
+  }
+
 
 
 
