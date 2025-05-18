@@ -13,8 +13,8 @@ public class Main {
   private final static int OK = 200;
 
   public static void main(String[] args) {
-    TopRatedMovies t = new TopRatedMovies(API_KEY);
-    t.cacheThePages(20);
+    new TopRatedMovies(API_KEY).cacheThePages(13+5);
+    new TrendingMovies(API_KEY).cacheThePages(20+5);
     int statusCodeTopRated = new TopRatedMovies(API_KEY).getStatusCode();
     int statusCodeGenre = new GenreIds(API_KEY).getStatusCode();
     int statusCodeTrending = new TrendingMovies(API_KEY).getStatusCode();
@@ -33,7 +33,7 @@ public class Main {
           "1 - Média de nota por gênero;\n" +
           "2 - Quantidade de filme por gênero;\n" +
           "3 - Quantidade de filme por ano;\n" +
-          "4 - Quantos e quais desses filmes estão entre os Trending nos últimos 6 meses\n" +
+          "4 - Quantos e quais desses filmes estão entre os Trending nas 20 primeiras páginas\n" +
           "0 - Sair\n" +
           "----------------------------------------------------------\n" +
           "Opção: ");

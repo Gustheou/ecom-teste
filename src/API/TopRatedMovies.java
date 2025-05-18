@@ -38,7 +38,6 @@ public class TopRatedMovies {
   public String getCacheTopRated(long page) {
     try {
       File filePage = new File(".cache/TopRatedMovies/page"+ page +".json");
-      //FileInputStream filePage= new FileInputStream(new File(".cache/TopRatedMovies/page"+ page +".json"));
       InputStreamReader reader = new FileReader(filePage);
       BufferedReader bufferedReader = new BufferedReader(reader);
       return bufferedReader.readLine();

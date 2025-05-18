@@ -23,6 +23,8 @@ public class MovieController {
 
   private final String API_KEY;
   private final long PAGE_LIMIT;
+  private final int CACHED_TOPRATED_PAGES = 18;
+  private final int CACHED_TRENDINGMOVIES_PAGES=25;
 
   public MovieController(String API_KEY) {
     this.API_KEY = API_KEY;
@@ -56,22 +58,19 @@ public class MovieController {
     ArrayList<Movie> moviesList = new ArrayList<Movie>();
     int counter = 0;
     File[] cachedFiles = new File(".cache/TopRatedMovies/").listFiles();
-    if(cachedFiles!= null && cachedFiles.length == 20) {
-      for(int i = 1; i <= 20; i++) {
+    if(cachedFiles!= null && cachedFiles.length == CACHED_TOPRATED_PAGES) {
+      for(int i = 1; i <= CACHED_TOPRATED_PAGES; i++) {
         try {
           String response = new TopRatedMovies(API_KEY).getCacheTopRated(i);
           JSONParser parse = new JSONParser();
           JSONObject data_obj = (JSONObject) parse.parse(response);
           JSONArray results = (JSONArray) data_obj.get("results");
-          System.out.println(response);
-          System.out.println("###############");
           for (Object movieObject : results) {
             JSONObject movieJson = (JSONObject) movieObject;
             Movie movie = movieData(movieJson);
             moviesList.add(movie);
             counter+=1;
-            if (counter ==250) {
-              System.out.println("Movies list: " + moviesList.size());
+            if (counter == limit) {
               return moviesList;
             }
           }
@@ -80,55 +79,36 @@ public class MovieController {
         }
       }
     } else {
-      new TopRatedMovies(API_KEY).cacheThePages(20);
+      new TopRatedMovies(API_KEY).cacheThePages(CACHED_TOPRATED_PAGES);
       return getMoviesTopRatedUntilMovieQuantity(limit);
     }
-    /*
-    for (int i = 1; i <= PAGE_LIMIT; i++) {
-      try {
-        HttpResponse<String> response = new TopRatedMovies(API_KEY).getTopRated(i);
-        JSONParser parse = new JSONParser();
-        JSONObject data_obj = (JSONObject) parse.parse(response.body());
-        JSONArray results = (JSONArray) data_obj.get("results");
-        System.out.println(response.body());
-        System.out.println("###############");
-        for (Object movieObject : results) {
-          JSONObject movieJson = (JSONObject) movieObject;
-          Movie movie = movieData(movieJson);
-          moviesList.add(movie);
-          counter +=1;
-          if (counter == limit) {
-            System.out.println("Movies list: " + moviesList.size());
-            return moviesList;
-          }
-        }
-      } catch (ParseException e) {
-        throw new RuntimeException(e);
-      }
-    }
-    return moviesList;
-    */
     return null;
   }
 
   private List<Movie> getMovieTrendingList(long limitPage) {
     ArrayList<Movie> moviesList = new ArrayList<Movie>();
-    for (int i = 1; i <= limitPage; i++) {
-      try {
-        HttpResponse<String> response = new TrendingMovies(API_KEY).getTrendingMovies(i);
-        JSONParser parse = new JSONParser();
-        JSONObject data_obj = (JSONObject) parse.parse(response.body());
-        JSONArray results = (JSONArray) data_obj.get("results");
-        for (Object movieObject : results) {
-          JSONObject movieJson = (JSONObject) movieObject;
-          Movie movie = movieData(movieJson);
-          moviesList.add(movie);
+    File[] cachedFiles = new File(".cache/TrendingMovies/").listFiles();
+    if(cachedFiles!= null && cachedFiles.length == CACHED_TRENDINGMOVIES_PAGES) {
+      for (int i = 1; i <= limitPage; i++) {
+        try {
+          String response = new TrendingMovies(API_KEY).getCacheTrendingMovies(i);
+          JSONParser parse = new JSONParser();
+          JSONObject data_obj = (JSONObject) parse.parse(response);
+          JSONArray results = (JSONArray) data_obj.get("results");
+          for (Object movieObject : results) {
+            JSONObject movieJson = (JSONObject) movieObject;
+            Movie movie = movieData(movieJson);
+            moviesList.add(movie);
+          }
+        } catch (ParseException e) {
+          throw new RuntimeException(e);
         }
-      } catch (ParseException e) {
-        throw new RuntimeException(e);
       }
+      return moviesList;
+    } else {
+      new TrendingMovies(API_KEY).cacheThePages(CACHED_TRENDINGMOVIES_PAGES);
+      return getMovieTrendingList(limitPage);
     }
-    return moviesList;
   }
 
   private boolean checkGenreMatch(Object expected, ArrayList matches) {
