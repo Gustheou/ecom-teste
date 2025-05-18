@@ -54,7 +54,6 @@ public class MovieController {
   }
 
   private List<Movie> getMoviesTopRatedUntilMovieQuantity (int limit) {
-
     ArrayList<Movie> moviesList = new ArrayList<Movie>();
     int counter = 0;
     File[] cachedFiles = new File(".cache/TopRatedMovies/").listFiles();

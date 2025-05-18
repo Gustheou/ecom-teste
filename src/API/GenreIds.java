@@ -22,14 +22,7 @@ public class GenreIds {
 
   public HashMap<Object, String> getGenreIDs() {
     try {
-      HttpRequest request = HttpRequest.newBuilder()
-          .uri(URI.create("https://api.themoviedb.org/3/genre/movie/list?language=pt-br"))
-          .header("accept", "application/json")
-          .header("Authorization", "Bearer " + API_KEY)
-          .method("GET", HttpRequest.BodyPublishers.noBody())
-          .build();
-      HttpResponse<String> response;
-      response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+      HttpResponse<String> response = getAPIResponse();
       JSONParser parse = new JSONParser();
       JSONObject dataObject = (JSONObject) parse.parse(response.body());
       JSONArray genreContent = (JSONArray) dataObject.get("genres");
@@ -41,7 +34,7 @@ public class GenreIds {
         genreIdentification.put(id, title);
       }
       return genreIdentification;
-    } catch (IOException | InterruptedException | ParseException e) {
+    } catch (ParseException e) {
       System.out.println("Exception in getGenreIDS: " + e.getMessage());
     }
     return null;
@@ -49,19 +42,25 @@ public class GenreIds {
 
   public int getStatusCode() {
     try {
+      HttpResponse<String> response = getAPIResponse();
+      return response.statusCode();
+    } catch (NullPointerException e) {
+      System.out.println("Não foi possível se conectar com a API, verifique a conexao com a internet e tente novamente!!!");
+    }
+    return 1;
+  }
+
+  private HttpResponse<String> getAPIResponse() {
+    try {
       HttpRequest request = HttpRequest.newBuilder()
           .uri(URI.create("https://api.themoviedb.org/3/genre/movie/list?language=pt-br"))
           .header("accept", "application/json")
           .header("Authorization", "Bearer " + API_KEY)
           .method("GET", HttpRequest.BodyPublishers.noBody())
           .build();
-      HttpResponse<String> response;
-      response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-      return response.statusCode();
-    } catch (IOException | InterruptedException | NullPointerException e) {
-      System.out.println("Não foi possível se conectar com a API, verifique a conexao com a internet e tente novamente!!!");
-    }
-    return 1;
+      return HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+    } catch (IOException | InterruptedException e) {
+      System.out.println("Exception in getAPIResponse: "+ e.getMessage());    }
+      return null;
   }
-
 }

@@ -14,6 +14,7 @@ import java.net.http.HttpResponse;
 public class TopRatedMovies {
 
   private final String API_KEY;
+  private final String CACHE_PATH = ".cache/TopRatedMovies/";
 
   public TopRatedMovies(String apiKey) {
     API_KEY = apiKey;
@@ -37,7 +38,7 @@ public class TopRatedMovies {
 
   public String getCacheTopRated(long page) {
     try {
-      File filePage = new File(".cache/TopRatedMovies/page"+ page +".json");
+      File filePage = new File(CACHE_PATH+"page"+ page +".json");
       InputStreamReader reader = new FileReader(filePage);
       BufferedReader bufferedReader = new BufferedReader(reader);
       return bufferedReader.readLine();
@@ -70,7 +71,7 @@ public class TopRatedMovies {
   }
 
   public void cacheThePages(long page){
-    File folder = new File(".cache/TopRatedMovies/");
+    File folder = new File(CACHE_PATH);
     if (!folder.exists()) {
       folder.mkdirs();
     }

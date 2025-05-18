@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ecom-teste:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ecom_teste_jar</output-path>
+    <root id="archive" name="ecom-teste.jar">
+      <element id="module-output" name="ecom-teste" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/json-simple-1.1.1.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

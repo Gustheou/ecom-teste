@@ -13,12 +13,12 @@ public class Main {
   private final static int OK = 200;
 
   public static void main(String[] args) {
-    new TopRatedMovies(API_KEY).cacheThePages(13+5);
-    new TrendingMovies(API_KEY).cacheThePages(20+5);
     int statusCodeTopRated = new TopRatedMovies(API_KEY).getStatusCode();
     int statusCodeGenre = new GenreIds(API_KEY).getStatusCode();
     int statusCodeTrending = new TrendingMovies(API_KEY).getStatusCode();
     if (statusCodeTrending == OK && statusCodeGenre == OK && statusCodeTopRated == OK) {
+      new TopRatedMovies(API_KEY).cacheThePages(13+5);
+      new TrendingMovies(API_KEY).cacheThePages(20+5);
       menu();
     }
   }
