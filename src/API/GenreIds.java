@@ -47,4 +47,21 @@ public class GenreIds {
     return null;
   }
 
+  public int getStatusCode() {
+    try {
+      HttpRequest request = HttpRequest.newBuilder()
+          .uri(URI.create("https://api.themoviedb.org/3/genre/movie/list?language=pt-br"))
+          .header("accept", "application/json")
+          .header("Authorization", "Bearer " + API_KEY)
+          .method("GET", HttpRequest.BodyPublishers.noBody())
+          .build();
+      HttpResponse<String> response;
+      response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+      return response.statusCode();
+    } catch (IOException | InterruptedException | NullPointerException e) {
+      System.out.println("Não foi possível se conectar com a API, verifique a conexao com a internet e tente novamente!!!");
+    }
+    return 1;
+  }
+
 }

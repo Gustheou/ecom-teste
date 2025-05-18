@@ -9,11 +9,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class MovieController {
@@ -49,8 +52,38 @@ public class MovieController {
   }
 
   private List<Movie> getMoviesTopRatedUntilMovieQuantity (int limit) {
+
     ArrayList<Movie> moviesList = new ArrayList<Movie>();
     int counter = 0;
+    File[] cachedFiles = new File(".cache/TopRatedMovies/").listFiles();
+    if(cachedFiles!= null && cachedFiles.length == 20) {
+      for(int i = 1; i <= 20; i++) {
+        try {
+          String response = new TopRatedMovies(API_KEY).getCacheTopRated(i);
+          JSONParser parse = new JSONParser();
+          JSONObject data_obj = (JSONObject) parse.parse(response);
+          JSONArray results = (JSONArray) data_obj.get("results");
+          System.out.println(response);
+          System.out.println("###############");
+          for (Object movieObject : results) {
+            JSONObject movieJson = (JSONObject) movieObject;
+            Movie movie = movieData(movieJson);
+            moviesList.add(movie);
+            counter+=1;
+            if (counter ==250) {
+              System.out.println("Movies list: " + moviesList.size());
+              return moviesList;
+            }
+          }
+        } catch (ParseException e) {
+          throw new RuntimeException(e);
+        }
+      }
+    } else {
+      new TopRatedMovies(API_KEY).cacheThePages(20);
+      return getMoviesTopRatedUntilMovieQuantity(limit);
+    }
+    /*
     for (int i = 1; i <= PAGE_LIMIT; i++) {
       try {
         HttpResponse<String> response = new TopRatedMovies(API_KEY).getTopRated(i);
@@ -68,6 +101,28 @@ public class MovieController {
             System.out.println("Movies list: " + moviesList.size());
             return moviesList;
           }
+        }
+      } catch (ParseException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return moviesList;
+    */
+    return null;
+  }
+
+  private List<Movie> getMovieTrendingList(long limitPage) {
+    ArrayList<Movie> moviesList = new ArrayList<Movie>();
+    for (int i = 1; i <= limitPage; i++) {
+      try {
+        HttpResponse<String> response = new TrendingMovies(API_KEY).getTrendingMovies(i);
+        JSONParser parse = new JSONParser();
+        JSONObject data_obj = (JSONObject) parse.parse(response.body());
+        JSONArray results = (JSONArray) data_obj.get("results");
+        for (Object movieObject : results) {
+          JSONObject movieJson = (JSONObject) movieObject;
+          Movie movie = movieData(movieJson);
+          moviesList.add(movie);
         }
       } catch (ParseException e) {
         throw new RuntimeException(e);
@@ -102,10 +157,12 @@ public class MovieController {
    ##################################
   */
 
-  public HashMap<String, Double> getAverageVoteForGenre () {
+  public HashMap<String, Double> getAverageVoteForGenre (int totalOfMovies) {
+    final DecimalFormat decimalFormat = new DecimalFormat("0.00");
+    decimalFormat.setRoundingMode(RoundingMode.UP);
     HashMap<String, Double> averageVoteForGenre = new HashMap<>();
     HashMap<Object, String> genreMap = new GenreIds(API_KEY).getGenreIDs();
-    List<Movie> movieList = getMoviesTopRatedUntilPage(PAGE_LIMIT);
+    List<Movie> movieList = getMoviesTopRatedUntilMovieQuantity(totalOfMovies);
     for(Object id : genreMap.keySet()) {
       int movieCounter = 0;
       double averageSum = 0;
@@ -117,6 +174,7 @@ public class MovieController {
       }
       String genre_name = genreMap.get(id);
       Double average = averageSum/movieCounter;
+      average = Double.parseDouble(decimalFormat.format(average));
       averageVoteForGenre.put(genre_name, average);
     }
     return averageVoteForGenre;
@@ -153,9 +211,9 @@ public class MovieController {
   ###################################
   */
 
-  public HashMap<String, Integer> getQuantityForMovieYearTopRated () {
+  public HashMap<String, Integer> getQuantityForMovieYearTopRated (int totalOfMovies) {
     HashMap<String, Integer> movieQuantityForMovieYear = new HashMap<>();
-    List<Movie> movieList = getMoviesTopRatedUntilPage(2);
+    List<Movie> movieList = getMoviesTopRatedUntilMovieQuantity(totalOfMovies);
     final int YEAR = 0; final int MONTH = 1; final int DAY = 2;
     for (Movie movie: movieList) {
       String[] movieDate = movie.getReleaseDate().split("-");
@@ -180,26 +238,6 @@ public class MovieController {
   ###################################
   */
 
-  private List<Movie> getMovieTrendingList(long limitPage) {
-    ArrayList<Movie> moviesList = new ArrayList<Movie>();
-    for (int i = 1; i <= limitPage; i++) {
-      try {
-        HttpResponse<String> response = new TrendingMovies(API_KEY).getTrendingMovies(i);
-        JSONParser parse = new JSONParser();
-        JSONObject data_obj = (JSONObject) parse.parse(response.body());
-        JSONArray results = (JSONArray) data_obj.get("results");
-        for (Object movieObject : results) {
-          JSONObject movieJson = (JSONObject) movieObject;
-          Movie movie = movieData(movieJson);
-          moviesList.add(movie);
-        }
-      } catch (ParseException e) {
-        throw new RuntimeException(e);
-      }
-    }
-    return moviesList;
-  }
-
   public List<String> getMovieTopRatedAndTrending() {
     List<String> movieTopRatedAndTrending = new ArrayList<>();
     List<Movie> moviesTopRated = getMoviesTopRatedUntilMovieQuantity(250);
@@ -213,12 +251,4 @@ public class MovieController {
     }
     return movieTopRatedAndTrending;
   }
-
-
-
-
-
-
-
-
 }

@@ -29,4 +29,13 @@ public class TrendingMovies {
     }
     return null;
   }
+
+  public int getStatusCode() {
+    try {
+      return getTrendingMovies(1).statusCode();
+    }catch (NullPointerException n) {
+      System.out.println("Não foi possível se conectar com a API, verifique a conexao com a internet e tente novamente!!!");
+    }
+    return 0;
+  }
 }

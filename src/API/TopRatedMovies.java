@@ -5,7 +5,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -35,6 +35,30 @@ public class TopRatedMovies {
     return null;
   }
 
+  public String getCacheTopRated(long page) {
+    try {
+      File filePage = new File(".cache/TopRatedMovies/page"+ page +".json");
+      //FileInputStream filePage= new FileInputStream(new File(".cache/TopRatedMovies/page"+ page +".json"));
+      InputStreamReader reader = new FileReader(filePage);
+      BufferedReader bufferedReader = new BufferedReader(reader);
+      return bufferedReader.readLine();
+
+    } catch (FileNotFoundException e) {
+      throw new RuntimeException(e);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  public int getStatusCode() {
+    try {
+      return getTopRated(1).statusCode();
+    }catch (NullPointerException n) {
+      System.out.println("Não foi possível se conectar com a API, verifique a conexao com a internet e tente novamente!!!");
+    }
+    return 0;
+  }
+
   public Long getTotalPages() {
     try {
       HttpResponse<String> response = new TopRatedMovies(API_KEY).getTopRated(1);
@@ -43,6 +67,29 @@ public class TopRatedMovies {
       return (Long) data_obj.get("total_pages");
     } catch (ParseException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  public void cacheThePages(long page){
+    File folder = new File(".cache/TopRatedMovies/");
+    if (!folder.exists()) {
+      folder.mkdirs();
+    }
+    Thread[] pageThread = new Thread[Integer.parseInt(String.valueOf(page))];
+    for (int i = 1; i <= page; i++) {
+      int pageFileNumber = i;
+      pageThread[i-1] = new Thread(() -> {
+        File pageFile = new File(folder.getPath()+"/page"+ pageFileNumber +".json");
+        String pageInfo = getTopRated(pageFileNumber).body();
+        try {
+          PrintWriter pw = new PrintWriter(pageFile);
+          pw.write(pageInfo);
+          pw.close();
+        } catch (FileNotFoundException e) {
+          throw new RuntimeException(e);
+        }
+      });
+      pageThread[i-1].start();
     }
   }
 }
