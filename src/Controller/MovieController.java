@@ -22,13 +22,13 @@ import java.util.*;
 public class MovieController {
 
   private final String API_KEY;
-  private final long PAGE_LIMIT;
+  //private final long PAGE_LIMIT;
   private final int CACHED_TOPRATED_PAGES = 18;
   private final int CACHED_TRENDINGMOVIES_PAGES=25;
 
   public MovieController(String API_KEY) {
     this.API_KEY = API_KEY;
-    PAGE_LIMIT = new TopRatedMovies(API_KEY).getTotalPages();
+    //PAGE_LIMIT = new TopRatedMovies(API_KEY).getTotalPages();
   }
 
   private List<Movie> getMoviesTopRatedUntilPage (long page) {
@@ -193,7 +193,7 @@ public class MovieController {
   public HashMap<String, Integer> getQuantityForMovieYearTopRated (int totalOfMovies) {
     HashMap<String, Integer> movieQuantityForMovieYear = new HashMap<>();
     List<Movie> movieList = getMoviesTopRatedUntilMovieQuantity(totalOfMovies);
-    final int YEAR = 0; final int MONTH = 1; final int DAY = 2;
+    final int YEAR = 0;
     for (Movie movie: movieList) {
       String[] movieDate = movie.getReleaseDate().split("-");
       if (movieQuantityForMovieYear.get(movieDate[YEAR]) != null) {
