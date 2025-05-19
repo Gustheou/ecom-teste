@@ -19,7 +19,7 @@ O projeto tem como intuito realizar requisições com a api de filmes [top-rated
 ### Executando
 
 #### Releases
-Na aba [releases](link) baixe o arquivo .jar
+Na aba [releases](https://github.com/Gustheou/ecom-teste/releases) baixe o arquivo .jar
 
 ##### Linux
 - Abra o terminal no diretório que baixou o arquivo e digite o comando: `java -jar ecom-teste.jar`
