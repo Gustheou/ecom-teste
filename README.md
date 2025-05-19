@@ -31,8 +31,10 @@ Há várias maneiras, segue abaixo algumas delas:
 #### Código fonte
 1. Clone o repositório: `https://github.com/Gustheou/ecom-teste.git`
 2. Abra o repositório com a sua IDE ou ferramenta de preferência
-    2.1. Intellij -> Abra o projeto e execute a classe Main.java
-    2.2. Demais -> Adicione a biblioteca externa ao seu projeto que se encontra em `lib/json-simple-1.1.1.jar` e posteriormente execute a classe Main.java
+
+   2.1. Intellij -> Abra o projeto e execute a classe Main.java
+
+   2.2. Demais -> Adicione a biblioteca externa ao seu projeto que se encontra em `lib/json-simple-1.1.1.jar` e posteriormente execute a classe Main.java
 
 ## Documentação e decisões tomadas
 Acesse a aba [wiki](link) para ter acesso a documentação e decisões tomadas (Inclui consulta com chat gpt).
