@@ -37,4 +37,4 @@ Há várias maneiras, segue abaixo algumas delas:
    2.2. Demais -> Adicione a biblioteca externa ao seu projeto que se encontra em `lib/json-simple-1.1.1.jar` e posteriormente execute a classe Main.java
 
 ## Documentação e decisões tomadas
-Acesse a aba [wiki](link) para ter acesso a documentação e decisões tomadas (Inclui consulta com chat gpt).
+Acesse a aba [wiki](https://github.com/Gustheou/ecom-teste/wiki) para ter acesso a documentação e decisões tomadas (Inclui consulta com chat gpt).
