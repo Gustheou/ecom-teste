@@ -26,7 +26,7 @@ Na aba [releases](link) baixe o arquivo .jar
 ##### Windows
 Há várias maneiras, segue abaixo algumas delas:
   1. Dois cliques no software para executar
-  2. Abra o prompt de comando e digite o seguinte comando: `java -jar ecom-teste.jar`
+  2. Abra o prompt de comando (CMD ou powershell ou de sua preferência) no diretório que se encontra o arquivo e digite o seguinte comando: `java -jar ecom-teste.jar`
 
 #### Código fonte
 1. Clone o repositório: `https://github.com/Gustheou/ecom-teste.git`
